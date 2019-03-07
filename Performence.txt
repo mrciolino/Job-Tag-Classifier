@@ -1,0 +1,3 @@
+job title classifier has 90% accuracy on 1k samples.
+
+job tag classifier has 86% accuracy on 1k samples.
