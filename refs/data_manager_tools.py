@@ -253,7 +253,7 @@ def df_to_values(df, preprocess):
 
     # seperate text feature numerical values
     text_df = df[['char_count', 'word_density', 'word_density', 'punctuation_count',
-                  'upper_case_word_count', 'upper_case_word_count', 'stopword_count']]
+                  'upper_cgase_word_count', 'upper_case_word_count', 'stopword_count']]
     text_feature_matrix = text_df.values
     # scale text feature matrix
     scaler = MinMaxScaler()
