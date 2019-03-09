@@ -4,7 +4,7 @@ Collection of feature engineering functions that takes
 creates features and prepares our data for the AI model
 """
 import string
-import textblob import TextBlob
+from textblob import TextBlob
 
 
 def text_features(df):
@@ -52,10 +52,21 @@ def word_selection_features(df):
 
 
 def pos_features(df):
-    # find numerical data from text (i.e. number of stopwords)
-    text_data_df = text_features(df)
-    # find numerical word selection data from text (i.e. number of verbs)
-    text_data_df = word_selection_features(df)
+
+    try:
+        # find numerical data from text (i.e. number of stopwords)
+        text_data_df = text_features(df)
+    except:
+        print("Unable to create numerical text features from the data")
+        sys.exit(0)
+
+    try:
+        # find part of speech data from text (i.e. number of verbs)
+        text_data_df = word_selection_features(df)
+    except:
+        print("Unable to create part or speech features from the data")
+        sys.exit(0)
+
     # return data
     return text_data_df
 
@@ -70,4 +81,16 @@ def aggregate_job_tag_rows(df):
         df.at[group.index[0], 'job_targets'] = target.tolist()
     # get rid of all repeated job ids
     df = df[df.job_targets != "N/A"]
+    return df
+
+
+def feature_creation(df):
+
+    df = pos_features(df)
+
+    try:
+        df = aggregate_job_tag_rows(df)
+    except:
+        print("Unable to consoladate job tags")
+
     return df
