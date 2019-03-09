@@ -56,31 +56,55 @@ def stem_text(df):
 
 
 def target_encoder(df):
-    # create job target encoder
-    labeler = MultiLabelBinarizer()
-    y = labeler.fit_transform(df.job_targets)
-    # save target corpus
-    with open("Models/Tokenizers/target_tokens.pkl", 'wb') as vocab_file:
-        pickle.dump(labeler, vocab_file, protocol=pickle.HIGHEST_PROTOCOL)
+
+    try:
+        # create job target encoder
+        labeler = MultiLabelBinarizer()
+        y = labeler.fit_transform(df.job_targets)
+        # save target corpus
+        with open("Models/Tokenizers/target_tokens.pkl", 'wb') as vocab_file:
+            pickle.dump(labeler, vocab_file, protocol=pickle.HIGHEST_PROTOCOL)
+    except:
+        print("Unable to one-hot-encode target")
+
     return y
 
 
 def scale_pos_features(df):
-    # seperate text feature numerical values
-    text_df = df[['char_count', 'word_density', 'word_density', 'punctuation_count',
-                  'upper_cgase_word_count', 'upper_case_word_count', 'stopword_count']]
-    text_feature_matrix = text_df.values
-    # scale text feature matrix
-    scaler = MinMaxScaler()
-    text_feature_matrix = scaler.fit_transform(text_feature_matrix)
+
+    try:
+        # seperate text feature numerical values
+        text_df = df[['char_count', 'word_density', 'word_density', 'punctuation_count',
+                      'upper_cgase_word_count', 'upper_case_word_count', 'stopword_count']]
+        text_feature_matrix = text_df.values
+        # scale text feature matrix
+        scaler = MinMaxScaler()
+        text_feature_matrix = scaler.fit_transform(text_feature_matrix)
+    except:
+        print("Unable to scale the text features")
+        sys.exit(0)
 
     return text_feature_matrix
 
 
-def collect_dataframes(matrix_1,matrix_2,matrix_3):
+def hash_trick(df, num_words):
+
+    try:
+        # use hashing trick to allow new words to automatically be used in future data
+        description_matrix = hashing_trick(df.job_description, num_words * 1.5)
+        title_matrix = hashing_trick(df.job_title, num_words * 1.5)
+    except:
+        print("Unable to convert text with hashing trick")
+        sys.exit(0)
+
+    # return the data
+    return description_matrix, title_matrix
+
+
+def collect_dataframes(matrix_1, matrix_2, matrix_3):
     # research locals().keys() and open ended arguments
     try:
-        x = np.hstack((matrix_1,matrix_2,matrix_3))
+        x = np.hstack((matrix_1, matrix_2, matrix_3))
     except:
         print("Unable to stack all of the matricies")
         sys.exit(0)
@@ -88,11 +112,19 @@ def collect_dataframes(matrix_1,matrix_2,matrix_3):
     return x
 
 
-def hash_trick(df, num_words):
+def feature_processing(df, num_words):
 
-    # use hashing trick to allow new words to automatically be used in future data
-    description_matrix = hashing_trick(df.job_description, num_words * 1.5)
-    title_matrix = hashing_trick(df.job_title, num_words * 1.5)
+    try:
+        df = remove_web_text(df)
+        df = clean_text(df)
+        df = strip_text(df)
+        df = stem_text(df)
+    except:
+        print("Unable to preprocess text into desired format")
 
-    # return the data
-    return description_matrix, title_matrix
+    text_feature_matrix = scale_pos_features(df)
+    description_matrix, title_matrix = hash_trick(df, num_words)
+    x = collect_dataframes(description_matrix, title_matrix, text_feature_matrix)
+    y = target_encoder(df)
+
+   return x,y
