@@ -1,3 +1,7 @@
+"""
+Cutback.io
+Our pipeline for tagging new jobs and optimizing the model as more data comes in
+"""
 from data_manager_tools import *
 from keras import models
 import pandas as pd
