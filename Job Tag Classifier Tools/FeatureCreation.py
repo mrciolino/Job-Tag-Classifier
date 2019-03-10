@@ -3,14 +3,18 @@ Cutback.io
 Collection of feature engineering functions that takes
 creates features and prepares our data for the AI model
 """
-import string
+from nltk.corpus import stopwords
 from textblob import TextBlob
+import traceback
+import string
+import sys
 
 
 def text_features(df):
 
     # Find number of words, stopwords, characters, word_density, punctuation count, uppercase words
     punctuation = string.punctuation
+    stop_words = stopwords.words('english')
     df['char_count'] = df.job_description.apply(len)
     df['word_count'] = df.job_description.apply(lambda x: len(x.split()))
     df['word_density'] = df['char_count'] / (df['word_count'] + 1)
@@ -48,7 +52,7 @@ def word_selection_features(df):
     df['adv_count'] = df.job_description.apply(lambda x: pos_check(x, 'adv'))
     df['pron_count'] = df.job_description.apply(lambda x: pos_check(x, 'pron'))
 
-    return text_data_df
+    return df
 
 
 def pos_features(df):
@@ -57,14 +61,16 @@ def pos_features(df):
         # find numerical data from text (i.e. number of stopwords)
         text_data_df = text_features(df)
     except:
-        print("Unable to create numerical text features from the data")
+        print("ERROR: Unable to create numerical text features from the data")
+        traceback.print_exc(file=sys.stdout)
         sys.exit(0)
 
     try:
         # find part of speech data from text (i.e. number of verbs)
         text_data_df = word_selection_features(df)
     except:
-        print("Unable to create part or speech features from the data")
+        print("ERROR: Unable to create part of speech features from the data")
+        traceback.print_exc(file=sys.stdout)
         sys.exit(0)
 
     # return data
@@ -91,6 +97,8 @@ def feature_creation(df):
     try:
         df = aggregate_job_tag_rows(df)
     except:
-        print("Unable to consoladate job tags")
+        print("ERROR: Unable to consoladate job tags")
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(0)
 
     return df
