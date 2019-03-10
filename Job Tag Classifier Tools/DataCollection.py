@@ -4,21 +4,21 @@ Collection of data collection functions that imports
 and cleans our data before feature engineering
 """
 import pandas as pd
+import traceback
 import psycopg2
 import sys
-
-sql_connection_string = "dbname='Cutback' host='127.0.0.1'"
 
 
 def load_data(sql_connection_string):
     try:
-        conn = psycopg2.connect(sql_connection_string)
-        sql = "select * from job_data;"
-        data = pd.io.sql.read_sql_query(sql, conn)
-        pd.io.sql.
+        connection = sql_connection_string[0]
+        selection = sql_connection_string[1]
+        conn = psycopg2.connect(connection)
+        df = pd.io.sql.read_sql_query(selection, conn)
         conn = None
     except:
-        print("Unable to read sql database into pandas datafram")
+        print("ERROR: Unable to read sql database into pandas dataframe")
+        traceback.print_exc(file=sys.stdout)
         sys.exit(0)
     return df
 
@@ -28,8 +28,10 @@ def remove_empty_rows(df):
         df = df[df["job_description"].notnull()]
         df = df[df["job_title"].notnull()]
     except:
-        print("Unable to remove empty row from the dataframe")
+        print("ERROR: Unable to remove empty row from the dataframe")
+        traceback.print_exc(file=sys.stdout)
         sys.exit(0)
+    return df
 
 
 def data_collection(sql_connection_string):
