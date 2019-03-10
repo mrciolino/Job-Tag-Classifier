@@ -3,20 +3,37 @@ Cutback.io
 Our AI model that is used to predict job tags
 """
 
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, train_test_split
 from keras.callbacks import TensorBoard
 from keras.models import Sequential
-from data_manager_tools import *
-from keras import backend as K
 from keras import layers
 from time import time
-import pickle as pkl
+import sys
 
-# making sure oru gpu is kicking
-K.tensorflow_backend._get_available_gpus()
+sys.path.append("Job Tag Classifier Tools")
+from DataCollection import data_collection
+from FeatureCreation import feature_creation
+from FeatureProcessing import feature_processing
 
-# import data
-X_train, X_test, Y_train, Y_test = pkl.load(open(processed_data_file, 'rb'))
+
+class DataLoader():
+
+    def __init__(self, sql_string, num_words, test_size):
+        super(DataLoader, self).__init__()
+        print("Starting Data Collection")
+        df = data_collection(sql_string)  # collect the data
+        print("Starting Feature Creation")
+        df = feature_creation(df)  # create some text features
+        print("Starting Feature Processing")
+        x, y = feature_processing(df, num_words)  # convert the text into numbers for processing
+        X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=test_size, random_state=42)  # validation
+        return X_train, X_test, Y_train, Y_test
+
+
+sql_string = ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
+num_words = 1e6
+test_size = .2
+X_train, X_test, Y_train, Y_test = DataLoader(sql_string, num_words, test_size)
 
 # length of input/output
 num_varibles = X_train.shape[1]
@@ -26,20 +43,6 @@ num_classes = Y_train.shape[1]
 tensorboard = TensorBoard(log_dir="job_tag_classifier/logs/{}".format(time()),
                           histogram_freq=1,
                           write_grads=True)
-
-# grid search for hyper perameters
-hyperparameters = {'learning_rate': [.001, .01, .1],
-                   'dropout_rate': [.4, .6, .8],
-                   'activation': ['relu', 'tanh', 'linear'],
-                   'epochs': [25, 75, 150],
-                   'batch_size': [1, 5, 20, 50],
-                   'optimizer': ['Adam', 'SGD', 'RMSprop'], }
-
-parameters = {'conv_layers': [1, 2, 3],
-              'dense_layers': [1, 2, 3],
-              'conv_nodes': [(100,10), (200,15), (300,20)],
-              'dense_nodes': [50, 100, 150],
-              'embedding_nodes': [25, 50, 75], }
 
 
 def classification_model():
@@ -54,7 +57,7 @@ def classification_model():
     model.add(layers.Dense(100, activation='relu'))
     model.add(layers.Dropout(.2))
     model.add(layers.Dense(num_classes, activation='sigmoid'))
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['categorical_accuracy', 'precision', 'recall'])
     return model
 
 
@@ -63,10 +66,7 @@ model = classification_model()
 
 # fit the model
 model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=5, batch_size=25, callbacks=[tensorboard])
-
 # evaluate the model
-scores = model.evaluate(X_test, Y_test, verbose=0)
-print('Accuracy: {}% \n Error: {}'.format(scores[1], 1 - scores[1]))
-
+model.evaluate(X_test, Y_test, verbose=0)
 # save the best preformered model
 model.save(model_file)
