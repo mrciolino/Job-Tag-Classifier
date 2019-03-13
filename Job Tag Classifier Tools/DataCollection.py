@@ -4,6 +4,7 @@ Collection of data collection functions that imports
 and cleans our data before feature engineering
 """
 import pandas as pd
+import numpy as np
 import traceback
 import psycopg2
 import sys
@@ -25,10 +26,12 @@ def load_data(sql_connection_string):
 
 def remove_empty_rows(df):
     try:
-        df = df[df["job_description"].notnull()]
-        df = df[df["job_title"].notnull()]
+        df['job_description'].replace('', np.nan, inplace=True)
+        df['job_title'].replace('', np.nan, inplace=True)
+        df.dropna(subset=['job_description'], inplace=True)
+        df.dropna(subset=['job_title'], inplace=True)
     except:
-        print("ERROR: Unable to remove empty row from the dataframe")
+        print("ERROR: Unable to remove empty rows from the dataframe")
         traceback.print_exc(file=sys.stdout)
         sys.exit(0)
     return df
