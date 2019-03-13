@@ -5,13 +5,26 @@ our features converts them into a format usable by AI models
 """
 import re
 import sys
+import pickle
 import traceback
+import numpy as np
 from gensim import parsing
 from bs4 import BeautifulSoup
-from nltk.corpus import stopwords
-from keras.preprocessing.text import hashing_trick
+from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.preprocessing import MinMaxScaler, MultiLabelBinarizer
 
+stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your',
+             'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its',
+             'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these',
+             'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing',
+             'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about',
+             'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in',
+             'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how',
+             'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
+             'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll',
+             'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn',
+             "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn',
+             "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 cList = {"ain't": "am not", "aren't": "are not", "can't": "cannot", "can't've": "cannot have", "'cause": "because", "could've": "could have",
          "couldn't": "could not", "couldn't've": "could not have", "didn't": "did not", "doesn't": "does not", "don't": "do not", "hadn't": "had not",
          "hadn't've": "had not have", "hasn't": "has not", "haven't": "have not", "he'd": "he would", "he'd've": "he would have", "he'll": "he will",
@@ -78,8 +91,7 @@ def strip_text(df):
     # remove digits
     df.job_description = df.job_description.str.replace('\d+', '')
     # remove stopwords
-    stop_words = stopwords.words('english')
-    pat = r'\b(?:{})\b'.format('|'.join(stop_words))
+    pat = r'\b(?:{})\b'.format('|'.join(stopwords))
     df.job_description = df.job_description.str.replace(pat, '')
     return df
 
@@ -91,23 +103,6 @@ def stem_text(df):
         return ' '.join(stemmed_tokens)
     df.job_description = df.job_description.apply(stem_sentences)
     return df
-
-
-def target_encoder(df):
-
-    try:
-        # create job target encoder
-        labeler = MultiLabelBinarizer()
-        y = labeler.fit_transform(df.job_targets)
-        # save target corpus
-        with open("Models/Tokenizers/target_tokens.pkl", 'wb') as vocab_file:
-            pickle.dump(labeler, vocab_file, protocol=pickle.HIGHEST_PROTOCOL)
-    except:
-        print("ERROR: Unable to one-hot-encode target")
-        traceback.print_exc(file=sys.stdout)
-        sys.exit(0)
-
-    return y
 
 
 def scale_pos_features(df):
@@ -128,12 +123,19 @@ def scale_pos_features(df):
     return text_feature_matrix
 
 
-def hash_trick(df, num_words):
+def hash_trick(df):
+
+    # recommended words in 2^18 but only have 20k words right now so lets just train
+    num_words = pow(2, 16)
+    vectorizer = HashingVectorizer(n_features=num_words, ngram_range=(1, 2), alternate_sign=False)
+
+    def hash(text):
+        return vectorizer.fit_transform(text).todense()
 
     try:
         # use hashing trick to allow new words to automatically be used in future data
-        description_matrix = hashing_trick(df.job_description, num_words * 1.5)
-        title_matrix = hashing_trick(df.job_title, num_words * 1.5)
+        description_matrix = hash(df.job_description)
+        title_matrix = hash(df.job_title)
     except:
         print("ERROR: Unable to convert text with hashing trick")
         traceback.print_exc(file=sys.stdout)
@@ -155,7 +157,24 @@ def collect_dataframes(matrix_1, matrix_2, matrix_3):
     return x
 
 
-def feature_processing(df, num_words):
+def target_encoder(df):
+
+    try:
+        # create job target encoder
+        labeler = MultiLabelBinarizer()
+        y = labeler.fit_transform(df.job_targets)
+        # save target corpus
+        with open("Models/Tokenizers/target_tokens.pkl", 'wb') as vocab_file:
+            pickle.dump(labeler, vocab_file, protocol=pickle.HIGHEST_PROTOCOL)
+    except:
+        print("ERROR: Unable to one-hot-encode target")
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(0)
+
+    return y
+
+
+def feature_processing(df):
 
     try:
         df = clean_text(df)
@@ -167,7 +186,8 @@ def feature_processing(df, num_words):
         sys.exit(0)
 
     text_feature_matrix = scale_pos_features(df)
-    description_matrix, title_matrix = hash_trick(df, num_words)
+    description_matrix, title_matrix = hash_trick(df)
+
     x = collect_dataframes(description_matrix, title_matrix, text_feature_matrix)
     y = target_encoder(df)
 
