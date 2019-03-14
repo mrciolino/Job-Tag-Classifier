@@ -4,7 +4,6 @@ Our pipeline for tagging new jobs and optimizing the model as more data comes in
 """
 from keras import models
 import pandas as pd
-import pickle
 import sys
 
 sys.path.append("Job Tag Classifier Tools")
@@ -23,8 +22,6 @@ list_of_indices = model.predict(X)
 
 # decode the target back into text
 predicition = tag_decoder(list_of_indices, threshold = .2)
-
-
 
 
 
