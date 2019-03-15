@@ -16,7 +16,7 @@ def load_data(sql_connection_string):
         selection = sql_connection_string[1]
         conn = psycopg2.connect(connection)
         df = pd.io.sql.read_sql_query(selection, conn)
-        conn = None
+        conn.close()
     except:
         print("ERROR: Unable to read sql database into pandas dataframe")
         traceback.print_exc(file=sys.stdout)
@@ -36,6 +36,23 @@ def remove_empty_rows(df):
         sys.exit(0)
     return df
 
+
+def add_new_data(df, sql_string):
+    try:
+        connection = sql_string[0]
+        selection = sql_string[1]
+        conn = psycopg2.connect(connection)
+        conn.execute('TRUNCATE my_table RESTART IDENTITY;')
+        df.to_sql(selection, conn, if_exists='append')
+    except:
+        print("ERROR: Unable to save new dataframe to sql table")
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(0)
+
+    # check to see if we should update classifier if we have 250 rows
+    result = conn.fetchone()
+    conn.close()
+    return True if result['count'] > 250 else False
 
 def data_collection(sql_connection_string):
 
