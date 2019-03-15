@@ -3,7 +3,7 @@ import pickle
 import sys
 
 sys.path.append("Job Tag Classifier Tools")
-from DataCollection import data_collection
+from DataCollection import data_collection, add_new_data
 from FeatureCreation import feature_creation
 from FeatureProcessing import feature_processing
 
@@ -23,6 +23,17 @@ def DataLoader(sql_string, test_size):
     X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=test_size, random_state=42)  # validation
 
     return X_train, X_test, Y_train, Y_test
+
+
+def batch_new_data(sql_import_string, sql_add_new_data_string):
+
+    # import the new data we are prediciting
+    df = data_collection(sql_import_string)
+
+    # save that data back into the new data table
+    update = add_new_data(df, sql_add_new_data_string)
+
+    return update
 
 
 def tag_decoder(list_of_indices, threshold):
