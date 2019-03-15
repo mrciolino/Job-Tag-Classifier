@@ -25,13 +25,12 @@ def text_features(df):
 
     # Find number of words, stopwords, characters, word_density, punctuation count, uppercase words
     punctuation = string.punctuation
-    stop_words = stopwords.words('english')
     df['char_count'] = df.job_description.apply(len)
     df['word_count'] = df.job_description.apply(lambda x: len(x.split()))
     df['word_density'] = df['char_count'] / (df['word_count'] + 1)
     df['punctuation_count'] = df.job_description.apply(lambda x: len("".join(_ for _ in x if _ in punctuation)))
     df['upper_case_word_count'] = df.job_description.apply(lambda x: len([wrd for wrd in x.split() if wrd.isupper()]))
-    df['stopword_count'] = df.job_description.apply(lambda x: len([wrd for wrd in x.split() if wrd.lower() in stop_words]))
+    df['stopword_count'] = df.job_description.apply(lambda x: len([wrd for wrd in x.split() if wrd.lower() in stopwords]))
 
     return df
 
