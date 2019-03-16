@@ -25,7 +25,7 @@ def DataLoader(sql_string, test_size):
     return X_train, X_test, Y_train, Y_test
 
 
-def batch_new_data(sql_import_string, sql_add_new_data_string):
+def BatchData(sql_import_string, sql_add_new_data_string):
 
     # import the new data we are prediciting
     df = data_collection(sql_import_string)
