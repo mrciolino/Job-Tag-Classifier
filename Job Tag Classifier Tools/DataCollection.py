@@ -3,6 +3,7 @@ Cutback.io
 Collection of data collection functions that imports
 and cleans our data before feature engineering
 """
+from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
 import traceback
@@ -40,19 +41,21 @@ def remove_empty_rows(df):
 def add_new_data(df, sql_string):
     try:
         connection = sql_string[0]
-        selection = sql_string[1]
-        conn = psycopg2.connect(connection)
-        conn.execute('TRUNCATE my_table RESTART IDENTITY;')
-        df.to_sql(selection, conn, if_exists='append')
+        table = sql_string[1]
+        engine = create_engine(connection)
+        df.to_sql(name = table, con=engine, if_exists='append', index=False)
     except:
         print("ERROR: Unable to save new dataframe to sql table")
         traceback.print_exc(file=sys.stdout)
         sys.exit(0)
 
-    # check to see if we should update classifier if we have 250 rows
-    result = conn.fetchone()
-    conn.close()
-    return True if result['count'] > 250 else False
+    string = "select count(*) from " + table
+    result = engine.execute(string)
+    for row in result: length = row[0]
+    engine.dispose()
+
+    return True if length > 6 else False
+
 
 def data_collection(sql_connection_string):
 
