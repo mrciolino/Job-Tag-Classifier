@@ -125,17 +125,16 @@ def scale_pos_features(df):
 
 def hash_trick(df):
 
-    # recommended words in 2^18 but only have 20k words right now so lets just train
-    num_words = pow(2, 16)
-    vectorizer = HashingVectorizer(n_features=num_words, ngram_range=(1, 2), alternate_sign=False)
-
-    def hash(text):
+    def hash(text, num_words):
+        vectorizer = HashingVectorizer(n_features=num_words, ngram_range=(1, 2), alternate_sign=False)
         return vectorizer.fit_transform(text).todense()
 
     try:
         # use hashing trick to allow new words to automatically be used in future data
-        description_matrix = hash(df.job_description)
-        title_matrix = hash(df.job_title)
+        # the length of the hash table must be fixed throught training and predicition
+        # if you want to change the length you must re train the model again
+        description_matrix = hash(df.job_description, pow(2, 15))
+        title_matrix = hash(df.job_title, pow(2, 12))
     except:
         print("ERROR: Unable to convert text with hashing trick")
         traceback.print_exc(file=sys.stdout)
