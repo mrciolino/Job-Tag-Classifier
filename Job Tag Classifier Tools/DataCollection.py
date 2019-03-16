@@ -54,7 +54,7 @@ def add_new_data(df, sql_string):
     for row in result: length = row[0]
     engine.dispose()
 
-    return True if length > 6 else False
+    return True if length > 25 else False
 
 
 def data_collection(sql_connection_string):
