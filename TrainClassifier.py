@@ -1,5 +1,5 @@
 """
-Cutback.io
+Matthew Ciolino - Job Tag Classifier 
 Our AI model that is used to predict job tags
 """
 from keras.callbacks import TensorBoard
