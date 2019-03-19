@@ -1,7 +1,8 @@
 """
-Cutback.io
+Matthew Ciolino - Job Tag Classifier 
 Update the classifier when we have enough new data to process
 """
+
 from keras import models
 import sys
 
