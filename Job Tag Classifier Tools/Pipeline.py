@@ -1,3 +1,8 @@
+"""
+Matthew Ciolino - Job Tag Classifier 
+A pipeline for operating the model from one function
+"""
+
 from sklearn.model_selection import train_test_split
 import pickle
 import sys
