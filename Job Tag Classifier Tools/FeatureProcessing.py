@@ -1,5 +1,5 @@
 """
-Cutback.io
+Matthew Ciolino - Job Tag Classifier 
 Collection of data processing functions that takes
 our features converts them into a format usable by AI models
 """

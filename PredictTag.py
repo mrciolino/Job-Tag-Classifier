@@ -1,5 +1,5 @@
 """
-Cutback.io
+Matthew Ciolino - Job Tag Classifier 
 Our pipeline for tagging new jobs and optimizing the model as more data comes in
 """
 

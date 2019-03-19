@@ -1,5 +1,5 @@
 """
-Cutback.io
+Matthew Ciolino - Job Tag Classifier 
 Collection of feature engineering functions that takes
 creates features and prepares our data for the AI model
 """

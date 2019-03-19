@@ -1,5 +1,5 @@
 """
-Cutback.io
+Matthew Ciolino - Job Tag Classifier 
 Collection of data collection functions that imports
 and cleans our data before feature engineering
 """
