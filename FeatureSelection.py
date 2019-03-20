@@ -4,6 +4,7 @@ from sklearn.feature_selection import chi2
 import pickle
 import sys
 import os
+
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
@@ -27,13 +28,3 @@ else:
 
 select = SelectKBest(chi2, k=32)
 X_new = select.fit_transform(X, Y)
-
-
-mask = select.get_support() #list of booleans
-new_features = [] # The list of your K best features
-
-for bool, feature in zip(mask, feature_names):
-    if bool:
-        new_features.append(feature)
-
-print(new_features)
