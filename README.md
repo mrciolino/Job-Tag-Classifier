@@ -12,9 +12,7 @@ Our data is manually tagged with each tag for each job having its own line. We h
 
 # Feature Creation
 
-Feature Creation
-
-![Kiku](refs/feature_creation_example.png)
+![Kiku](refs/feature_creation_example.png) ![Kiku](refs/feature_creation_example.png)
 
 # Feature Processing
 
