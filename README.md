@@ -6,16 +6,16 @@ We take a job title and description and predict the tags associated with that jo
 
 # The Data
 
-Our data is manually tagged with each tag for each job having its own line. We handle this in our feature processing but it is an important note of how to handle unstructured data. Here is a is an example of the data:
+Our data is manually tagged with each tag for each job having its own line. We handle this in our feature processing but it is an important example of unstructured data. Here is a is an example of the data:
 
 ![Kiku](refs/data_example.png)
 
 # The Model
 
-Our model is a convultional nerual network that is 8 layers deep. ...
+Our model is a CNN with LTSM that has an embedding layer, 2 convolutional & pooling layers, a LSTM layer, and 3 dense layers forming or neural network. Here is a representation of our network.
 
 ![Kiku](refs/network.png)
 
-# The Performence
+# The Performance
 
 ![Kiku](refs/performence_metrics.png)
