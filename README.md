@@ -1,4 +1,4 @@
-# Job Tag Classifier - (Semi-Supervised Learning)
+destiny# Job Tag Classifier - (Semi-Supervised Learning)
 We take a job title and description and predict the tags associated with that job. We do this through Natural Language Processing (NLP) and a Convolutional Neural Network (CNN). This model will train itself to become more accurate as more jobs are added by training it when new data is added. The model uses feature hashing which allows it to learn new words in the input space. Here is the pipeline used:
 
 ![Kiku](refs/pipeline.png)
@@ -14,24 +14,7 @@ Our data is manually tagged with each tag for each job having its own line. We h
 
 Feature Creation
 
-
-text features:
-characfter count
-word count
-word deswnity
-puncutation couint
-uppercase word count
-stopword count
-
-part of speech:
-noun count
-pronoun count
-verb count
-adjective count
-adverb count
-
-aggregate rows:
-count tag for each job id and put them on one row
+![Kiku](refs/feature_creation_example.png)
 
 # Feature Processing
 
@@ -39,12 +22,12 @@ feature processing
 
 clean text:
 remove any html or css code from the text
-replace any leftover arrows from the text 
+replace any leftover arrows from the text
 replace any new line symboles
 
 strip text:
 
-expand any contractions 
+expand any contractions
 make all the text lowercase
 remove any punucations
 remove any digits
