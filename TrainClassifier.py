@@ -1,5 +1,5 @@
 """
-Matthew Ciolino - Job Tag Classifier 
+Matthew Ciolino - Job Tag Classifier
 Our AI model that is used to predict job tags
 """
 from keras.callbacks import TensorBoard
@@ -27,11 +27,15 @@ tensorboard = TensorBoard(log_dir="Logs/{}".format(time()),
 def classification_model():
     # create model
     model = Sequential()
-    model.add(layers.Embedding(input_dim=num_varibles + 1, output_dim=25, input_length=num_varibles))
+    model.add(layers.Embedding(input_dim=num_varibles + 1, output_dim=100, input_length=num_varibles))
+    model.add(layers.Conv1D(250, 10, activation='relu'))
+    model.add(layers.MaxPooling1D(2))
     model.add(layers.Conv1D(200, 10, activation='relu'))
-    model.add(layers.Conv1D(150, 10, activation='relu'))
-    model.add(layers.GlobalMaxPooling1D())
-    model.add(layers.Dense(100, activation='relu'))
+    model.add(layers.MaxPooling1D(2))
+    model.add(layers.LSTM(500))
+    model.add(layers.Dense(200, activation='relu'))
+    model.add(layers.Dropout(.2))
+    model.add(layers.Dense(150, activation='relu'))
     model.add(layers.Dropout(.2))
     model.add(layers.Dense(100, activation='relu'))
     model.add(layers.Dropout(.2))
@@ -42,7 +46,7 @@ def classification_model():
 
 # build the model
 model = classification_model()
-print(model.summary())
+model.summary()
 
 # fit the model
 model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=1, batch_size=25, callbacks=[tensorboard])
