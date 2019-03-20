@@ -6,7 +6,7 @@ We take a job title and description and predict the tags associated with that jo
 
 # The Data
 
-Our data is manually tagged with each tag for each job having its own line. We handle this in our feature processing but it is an important note of how to handle unstrucuted data. Here is a is an example of the data:
+Our data is manually tagged with each tag for each job having its own line. We handle this in our feature processing but it is an important note of how to handle unstructured data. Here is a is an example of the data:
 
 ![Kiku](refs/data_example.png)
 
