@@ -10,6 +10,57 @@ Our data is manually tagged with each tag for each job having its own line. We h
 
 ![Kiku](refs/data_example.png)
 
+# Feature Creation
+
+Feature Creation
+
+
+text features:
+characfter count
+word count
+word deswnity
+puncutation couint
+uppercase word count
+stopword count
+
+part of speech:
+noun count
+pronoun count
+verb count
+adjective count
+adverb count
+
+aggregate rows:
+count tag for each job id and put them on one row
+
+# Feature Processing
+
+feature processing
+
+clean text:
+remove any html or css code from the text
+replace any leftover arrows from the text 
+replace any new line symboles
+
+strip text:
+
+expand any contractions 
+make all the text lowercase
+remove any punucations
+remove any digits
+remove stopwords
+
+stem text:
+stem all the words
+
+scale pos features:
+scale the pos features to not distort the data
+
+hash text:
+use feature hashing to reduce feature size and allow model to learn new input words
+
+
+
 # The Model
 
 Our model is a CNN with LTSM that has an embedding layer, 2 convolutional & pooling layers, a LSTM layer, and 3 dense layers forming or neural network. Here is a representation of our network.
