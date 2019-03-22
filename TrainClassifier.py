@@ -8,6 +8,8 @@ from keras import layers
 from time import time
 import sys
 
+# import encoder with wwegith once training
+
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
@@ -49,7 +51,7 @@ model = classification_model()
 model.summary()
 
 # fit the model
-model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=1, batch_size=25, callbacks=[tensorboard])
+model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=1, batch_size=1, callbacks=[tensorboard])
 
 # evaluate the model
 model.evaluate(X_test, Y_test, verbose=0)
