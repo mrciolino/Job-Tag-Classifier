@@ -3,8 +3,7 @@ We take a job title and description and predict the tags associated with that jo
 
 ![Kiku](refs/pipeline.png)
 
-
-# The Data
+# Data Collection
 
 Our data is manually tagged with each tag for each job having its own line. We handle this in our feature processing but it is an important example of unstructured data. Here is a is an example of the data:
 
@@ -12,7 +11,7 @@ Our data is manually tagged with each tag for each job having its own line. We h
 
 # Feature Creation
 
-![Kiku](refs/feature_creation_example.png) ![Kiku](refs/feature_creation_example.png)
+![Kiku](refs/feature_creation_example.png)
 
 # Feature Processing
 
