@@ -1,5 +1,5 @@
 """
-Matthew Ciolino - Job Tag Classifier 
+Matthew Ciolino - Job Tag Classifier
 Collection of data processing functions that takes
 our features converts them into a format usable by AI models
 """
@@ -110,7 +110,7 @@ def scale_pos_features(df):
     try:
         # seperate text feature numerical values
         text_df = df[['char_count', 'word_density', 'word_density', 'punctuation_count',
-                      'upper_case_word_count', 'upper_case_word_count', 'stopword_count']]
+                      'upper_case_word_count', 'stopword_count','upper_case_word_count']]
         text_feature_matrix = text_df.values
         # scale text feature matrix
         scaler = MinMaxScaler()
@@ -126,14 +126,14 @@ def scale_pos_features(df):
 def hash_trick(df):
 
     def hash(text, num_words):
-        vectorizer = HashingVectorizer(n_features=num_words, ngram_range=(1, 2), alternate_sign=False)
+        vectorizer = HashingVectorizer(n_features=num_words, alternate_sign=False)
         return vectorizer.fit_transform(text).todense()
 
     try:
         # use hashing trick to allow new words to automatically be used in future data
         # the length of the hash table must be fixed throught training and predicition
         # if you want to change the length you must re train the model again
-        description_matrix = hash(df.job_description, pow(2, 15))
+        description_matrix = hash(df.job_description, pow(2, 15)+1)
         title_matrix = hash(df.job_title, pow(2, 12))
     except:
         print("ERROR: Unable to convert text with hashing trick")
