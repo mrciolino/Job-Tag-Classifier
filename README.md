@@ -1,4 +1,4 @@
-destiny# Job Tag Classifier - (Semi-Supervised Learning)
+# Job Tag Classifier - (Semi-Supervised Learning)
 We take a job title and description and predict the tags associated with that job. We do this through Natural Language Processing (NLP) and a Convolutional Neural Network (CNN). This model will train itself to become more accurate as more jobs are added by training it when new data is added. The model uses feature hashing which allows it to learn new words in the input space. Here is the pipeline used:
 
 ![Kiku](refs/pipeline.png)
