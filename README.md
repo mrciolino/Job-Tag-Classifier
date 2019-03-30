@@ -15,31 +15,7 @@ Our data is manually tagged with each tag for each job having its own line. We h
 
 # Feature Processing
 
-feature processing
-
-clean text:
-remove any html or css code from the text
-replace any leftover arrows from the text
-replace any new line symboles
-
-strip text:
-
-expand any contractions
-make all the text lowercase
-remove any punucations
-remove any digits
-remove stopwords
-
-stem text:
-stem all the words
-
-scale pos features:
-scale the pos features to not distort the data
-
-hash text:
-use feature hashing to reduce feature size and allow model to learn new input words
-
-
+![Kiku](refs/feature_processing_img.png)
 
 # The Model
 
