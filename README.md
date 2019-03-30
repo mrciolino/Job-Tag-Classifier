@@ -5,17 +5,14 @@ We take a job title and description and predict the tags associated with that jo
 
 # Data Collection
 
-Our data is manually tagged with each tag for each job having its own line. We handle this in our feature processing but it is an important example of unstructured data. Here is a is an example of the data:
+Our data is manually tagged with each tag for each job having its own line. Since this crates lots of duplicate rows we must handle this in our feature processing step. Here is a is an example of the data:
 
 ![Kiku](refs/data_example.png)
 
-# Feature Creation
+# Feature Creation and Feature Processing
 
-![Kiku](refs/feature_creation_example.png)
+![Kiku](refs/feature_creation_and_feature_processing.png)
 
-# Feature Processing
-
-![Kiku](refs/feature_processing_img.png)
 
 # The Model
 
