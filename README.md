@@ -11,6 +11,8 @@ Our data is manually tagged with each tag for each job having its own line. Sinc
 
 # Feature Creation and Feature Processing
 
+After we grab the data from our SQL database, we convert it into a pandas dataframe before creating our features and turning the text into numerical data. We perform feature creation by generating text features, part of speech features, and finally collect all the job tags for each job id to remove duplicate rows. We are now ready for feature processing. We try to reduce the number of words and therefore the number of variables for input into our model by reducing words down to their root form. We do this through cleaning, stripping, and stemming. We then use feature hashing so our input space can recognize new words it has not seen. We then add all the features we created and the text data into one dataframe and send it to our model.
+
 ![Kiku](refs/feature_creation_and_feature_processing.png)
 
 
