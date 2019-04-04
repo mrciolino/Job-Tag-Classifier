@@ -26,24 +26,29 @@ tensorboard = TensorBoard(log_dir="Logs/{}".format(time()),
                           write_grads=True)
 
 
-def classification_model():
-    # create model
-    model = Sequential()
-    model.add(layers.Embedding(input_dim=num_varibles + 1, output_dim=100, input_length=num_varibles))
-    model.add(layers.Conv1D(250, 10, activation='relu'))
-    model.add(layers.MaxPooling1D(2))
-    model.add(layers.Conv1D(200, 10, activation='relu'))
-    model.add(layers.MaxPooling1D(2))
-    model.add(layers.LSTM(500))
-    model.add(layers.Dense(200, activation='relu'))
-    model.add(layers.Dropout(.2))
-    model.add(layers.Dense(150, activation='relu'))
-    model.add(layers.Dropout(.2))
-    model.add(layers.Dense(100, activation='relu'))
-    model.add(layers.Dropout(.2))
-    model.add(layers.Dense(num_classes, activation='sigmoid'))
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    return model
+class model():
+
+    def __init__():
+        pass
+
+    def encoder():
+        encoder = models.load_model("Models/encoder_model")
+        return encoder
+
+    def classification_model():
+        # create model
+        model = Sequential()
+        model.add(layers.Input(shape=(num_varibles, 1)))
+        model.add(layers.LSTM(500))
+        model.add(layers.Dense(200, activation='relu'))
+        model.add(layers.Dropout(.2))
+        model.add(layers.Dense(150, activation='relu'))
+        model.add(layers.Dropout(.2))
+        model.add(layers.Dense(100, activation='relu'))
+        model.add(layers.Dropout(.2))
+        model.add(layers.Dense(num_classes, activation='sigmoid'))
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        return model
 
 
 # build the model
