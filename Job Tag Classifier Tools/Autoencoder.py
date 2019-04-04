@@ -7,18 +7,17 @@ sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
 sql_string = ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
-X_train, X_test, _, _ = DataLoader(sql_string, test_size=.99)
+X_train, X_test, _, _ = DataLoader(sql_string, test_size=.1)
 
 # reshape data to fit into our model
-num_varibles = X_test.shape[1]
-X_test = X_test[:, :, np.newaxis]
-X_test.shape
+num_varibles = X_train.shape[1]
 
 
 def model(num_varibles):
 
-    input = layers.Input(shape=(num_varibles, 1))
-    encoder_conv_1 = layers.Conv1D(250, 10, padding='same')(input)
+    input = layers.Input(shape=(num_varibles,))
+    reshape = layers.Reshape((num_varibles, 1))(input)
+    encoder_conv_1 = layers.Conv1D(250, 10, padding='same')(reshape)
     enconder_pool_1 = layers.MaxPooling1D(2, padding='same')(encoder_conv_1)
     encoder_conv_2 = layers.Conv1D(200, 8, padding='same')(enconder_pool_1)
     enconder_pool_2 = layers.MaxPooling1D(2, padding='same')(encoder_conv_2)
@@ -41,11 +40,11 @@ def model(num_varibles):
     decoder_upsample_2 = layers.UpSampling1D(2)(decoder_conv_2)
     decoder_conv_3 = layers.Conv1D(250, 10, padding='same')(decoder_upsample_2)
     decoder_upsample_3 = layers.UpSampling1D(2)(decoder_conv_3)
-    decoded = layers.Conv1D(1, 0, padding='same')(decoder_upsample_3)
+    decoded = layers.Conv1D(1, 250, padding='same')(decoder_upsample_3)
+    output = layers.Reshape((num_varibles,))(decoded)
 
-    autoencoder = Model(inputs=input, outputs=decoded, name='AE')
-    encoder = Model(inputs=input, outputs=encoded, name='encoder')
-
+    autoencoder = Model(inputs=input, outputs=output, name='Autoencoder')
+    encoder = Model(inputs=input, outputs=encoded, name='Encoder')
     autoencoder.compile(optimizer='adam', loss='mse')
     encoder.compile(optimizer='adam', loss='mse')
 
@@ -53,7 +52,7 @@ def model(num_varibles):
 
 
 autoencoder, encoder = model(num_varibles)
-autoencoder.summary()
-encoder.summary()
 
-autoencoder.fit(X_test, X_test, epochs=2, batch_size=10, verbose=1)
+autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=25, verbose=1)
+
+model = encoder.load_model("Modes/encoder_model")
