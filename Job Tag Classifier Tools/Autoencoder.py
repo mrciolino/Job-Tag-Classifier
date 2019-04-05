@@ -1,12 +1,22 @@
+from keras import layers, backend
 from keras.models import Model
-from keras import layers
+import tensorflow as tf
 import numpy as np
 
 import sys
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
-sql_string = ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
+# make sure keras sees our gpu
+backend.tensorflow_backend._get_available_gpus()
+config = tf.ConfigProto(device_count={'GPU': 1})
+config.gpu_options.allow_growth = True
+sess = tf.Session(config=config)
+backend.set_session(sess)
+
+# windows connection string ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
+# mac connection string " ""
+sql_string = ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
 X_train, X_test, _, _ = DataLoader(sql_string, test_size=.1)
 
 # reshape data to fit into our model
@@ -53,6 +63,6 @@ def model(num_varibles):
 
 autoencoder, encoder = model(num_varibles)
 
-autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=25, verbose=1)
+autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=10, verbose=1)
 
 model = encoder.load_model("Modes/encoder_model")
