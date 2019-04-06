@@ -60,14 +60,11 @@ def model(num_varibles):
 
     return autoencoder, encoder
 
-
+# load the network
 autoencoder, encoder = model(num_varibles)
-<<<<<<< HEAD
 
+# fit the autoencoder
 autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=10, verbose=1)
 
+# save the encoder half
 model = encoder.load_model("Models/encoder_model")
-=======
-autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=25, batch_size=10, verbose=1)
-encoder.save("Models\encoder_model")
->>>>>>> 6169ee0dd2d652d0fd9d986bb8b442280bbf66e3
