@@ -1,5 +1,5 @@
 """
-Matthew Ciolino - Job Tag Classifier 
+Matthew Ciolino - Job Tag Classifier
 Our pipeline for tagging new jobs and optimizing the model as more data comes in
 """
 
@@ -15,7 +15,9 @@ import UpdateClassifier
 model_file = "Models"
 model = models.load_model(model_file)
 
-# read in new job to classifiy ----- Change to select new from job_data
+# read in new job to classifiy
+# ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
+# ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
 sql_import_string = ["dbname='Cutback' host='127.0.0.1'", "select * from job_data LIMIT 1 OFFSET 20;"]
 X, _, Y, _ = DataLoader(sql_import_string, test_size=0)
 
