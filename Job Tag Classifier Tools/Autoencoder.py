@@ -62,7 +62,5 @@ def model(num_varibles):
 
 
 autoencoder, encoder = model(num_varibles)
-
-autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=10, verbose=1)
-
-model = encoder.load_model("Modes/encoder_model")
+autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=25, batch_size=10, verbose=1)
+encoder.save("Models\encoder_model")
