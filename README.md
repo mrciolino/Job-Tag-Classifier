@@ -1,5 +1,5 @@
 # Job Tag Classifier - (Semi-Supervised Learning)
-We take a job title and description and predict the tags associated with that job. We do this through Natural Language Processing (NLP) and a Convolutional Neural Network (CNN). This model will train itself to become more accurate as more jobs are added by training it when new data is added. The model uses feature hashing which allows it to learn new words in the input space. Here is the pipeline used:
+We take a job title and description and predict the tags associated with that job. We do this through Natural Language Processing (NLP), a Convolutional Autoencoder (AE), and a Deep Neural Network (DNN). This model will train itself to become more accurate as more jobs are added by training it when new data is added. The model uses feature hashing which allows it to learn new words in the input space. Here is the pipeline used:
 
 ![Kiku](refs/pipeline.png)
 
@@ -22,9 +22,15 @@ We first trained an autoencoder (AE) to further reduce dimensionality of our var
 
 ![Kiku](refs/autoencoder_example.png)
 
-Our model is a then uses a recurrent neural network (RNN)
+Our model then uses a simple deep neural network with 5 hidden layers. We use Rectified Linear Units for activation of the hidden layers with dropout. Our output layer has a sigmoid activation which is then thresholded to provide 0 or 1 for each tag.
 
-![Kiku](refs/model.png)
+![Kiku](refs/classifier_model.png)
+
+# Updating the Model
+
+After we have seen enough data go through the predict tag function we use all the new jobs we saw to train the classifier again. We load the weights of the model and update them by fitting the new data. Since we are using fixed size feature hashing we are able to learn unseen words and use them as variables in the model.
+
+![Kiku](refs/new_data_pipeline.png)
 
 # The Performance
 
