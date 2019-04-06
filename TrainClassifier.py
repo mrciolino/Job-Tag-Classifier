@@ -34,6 +34,8 @@ def classification_model(num_varibles, num_classes):
     model.add(layers.Dropout(.2))
     model.add(layers.Dense(50, activation='relu'))
     model.add(layers.Dropout(.2))
+    model.add(layers.Dense(25, activation='relu'))
+    model.add(layers.Dropout(.2))
     model.add(layers.Dense(num_classes, activation='sigmoid'))
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     return model
@@ -48,7 +50,6 @@ X_test_encoded = encoder.predict(X_test)
 num_varibles = X_train_encoded.shape[1]
 num_classes = Y_train.shape[1]
 model = classification_model(num_varibles, num_classes)
-
 
 # fit the model
 model.fit(X_train_encoded, Y_train, validation_data=(X_test_encoded, Y_test), epochs=1, batch_size=1, callbacks=[tensorboard])
