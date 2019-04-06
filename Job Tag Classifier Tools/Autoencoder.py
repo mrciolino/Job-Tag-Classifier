@@ -14,8 +14,8 @@ config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 backend.set_session(sess)
 
-# windows connection string ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
-# mac connection string " ""
+# ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
+# ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
 sql_string = ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
 X_train, X_test, _, _ = DataLoader(sql_string, test_size=.1)
 
@@ -65,4 +65,4 @@ autoencoder, encoder = model(num_varibles)
 
 autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=10, verbose=1)
 
-model = encoder.load_model("Modes/encoder_model")
+model = encoder.load_model("Models/encoder_model")

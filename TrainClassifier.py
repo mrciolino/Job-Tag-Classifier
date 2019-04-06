@@ -11,6 +11,8 @@ import sys
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
+# ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
+# ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
 sql_string = ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
 X_train, X_test, Y_train, Y_test = DataLoader(sql_string, test_size=.2)
 
