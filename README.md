@@ -1,11 +1,11 @@
 # Job Tag Classifier - (Semi-Supervised Learning)
-We take a job title and description and predict the tags associated with that job. We do this through Natural Language Processing (NLP), a Convolutional Autoencoder (AE), and a Deep Neural Network (DNN). This model will train itself to become more accurate as more jobs are added by training it when new data is added. The model uses feature hashing which allows it to learn new words in the input space. Here is the pipeline used:
+We take a job title and a job description and predict the tags associated with that job. We do this through Natural Language Processing (NLP), a Convolutional Autoencoder (AE), and a Deep Neural Network (DNN). This model will train itself to become more accurate as more jobs are added by training it when new data is added. The model uses feature hashing which allows it to learn new words in the job descriptions. Here is the pipeline used:
 
 ![Kiku](refs/pipeline.png)
 
 # Data Collection
 
-Our data is manually tagged with each tag for each job having its own line. Since this crates lots of duplicate rows we must handle this in our feature processing step. Here is a is an example of the data:
+Our data is manually tagged with each tag for each job having its own line. Since this creates lots of duplicate rows we must handle this in our feature processing step. Here is a is an example of the data:
 
 ![Kiku](refs/data_example_2.png)
 
@@ -18,11 +18,11 @@ After we grab the data from our SQL database, we convert it into a pandas datafr
 
 # The Model
 
-We first trained an autoencoder (AE) to further reduce dimensionality of our variables from 32k to 100. We do this through training a convolutional AE with 3 hidden layers that is symmetrically around the center of the network. The input to the network is the same as the output of the network. This way our network is then trained to learn a latent space representation of the data essentially compressing the data with some losses. We accept those losses as we are able to use a lot less computing power because of our dimensionality reduction. After we train the autoencoder on our dataset we can then cut off the decoder and use the encoder as the first step in our model.
+We first trained an autoencoder (AE) to reduce the dimensionality of our data from 32k to 100 columns. We do this through training a convolutional AE with 4 convolution/pooling steps and 3 hidden layers that is symmetric around the center of the network. The input to the network is the same as the output of the network. This way our network is trained to learn a representation of the data. This essentially compresses the data with some losses. We accept those losses as we are able to use a lot less computing power because of our dimensionality reduction. After we train the autoencoder on our dataset we can then cut off the decoder and use the encoder as the first step in our model. The following is a simplified representation of autoencoding.
 
 ![Kiku](refs/autoencoder_example.png)
 
-Our model then uses a simple deep neural network with 5 hidden layers. We use Rectified Linear Units for activation of the hidden layers with dropout. Our output layer has a sigmoid activation which is then thresholded to provide 0 or 1 for each tag.
+Our model then uses a deep neural network (DNN) with 5 hidden layers [Input->200->150->100->50->25->Output]. We use Rectified Linear Units ('relu') for the activation of each hidden layers and apply a dropout. Our output layer has 16 classes with sigmoid activation. We then threshold the output to provide 0 or 1 for each tag. The following is a simplified representation of our DNN.
 
 ![Kiku](refs/classifier_model.png)
 
