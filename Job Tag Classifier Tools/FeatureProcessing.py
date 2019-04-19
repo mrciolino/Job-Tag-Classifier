@@ -110,7 +110,7 @@ def scale_pos_features(df):
     try:
         # seperate text feature numerical values
         text_df = df[['char_count', 'word_density', 'word_density', 'punctuation_count',
-                      'upper_case_word_count', 'stopword_count','upper_case_word_count']]
+                      'upper_case_word_count', 'stopword_count', 'upper_case_word_count']]
         text_feature_matrix = text_df.values
         # scale text feature matrix
         scaler = MinMaxScaler()
@@ -133,8 +133,9 @@ def hash_trick(df):
         # use hashing trick to allow new words to automatically be used in future data
         # the length of the hash table must be fixed throught training and predicition
         # if you want to change the length you must re train the model again
+        # Collisions can be avoided using larger sized arrays but for now...
         description_matrix = hash(df.job_description, pow(2, 18))
-        title_matrix = hash(df.job_title, pow(2, 13)-7)
+        title_matrix = hash(df.job_title, pow(2, 13) - 7)
     except:
         print("ERROR: Unable to convert text with hashing trick")
         traceback.print_exc(file=sys.stdout)
