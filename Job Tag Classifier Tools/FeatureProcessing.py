@@ -134,7 +134,7 @@ def hash_trick(df):
         # the length of the hash table must be fixed throught training and predicition
         # if you want to change the length you must re train the model again
         # Collisions can be avoided using larger sized arrays but for now...
-        description_matrix = hash(df.job_description, pow(2, 18))
+        description_matrix = hash(df.job_description, pow(2, 17))
         title_matrix = hash(df.job_title, pow(2, 13) - 7)
     except:
         print("ERROR: Unable to convert text with hashing trick")
