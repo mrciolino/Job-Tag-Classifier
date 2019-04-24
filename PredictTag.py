@@ -2,7 +2,6 @@
 Matthew Ciolino - Job Tag Classifier
 Our pipeline for tagging new jobs and optimizing the model as more data comes in
 """
-
 from keras import models
 import pandas as pd
 import sys
@@ -11,18 +10,19 @@ sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader, BatchData
 import UpdateClassifier
 
-# load models
-model_file = "Models"
-model = models.load_model(model_file)
-
-# read in new job to classifiy
 # ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
 # ["dbname='Cutback' host='127.0.0.1'", "select * from job_data;"]
 sql_import_string = ["dbname='Cutback' host='127.0.0.1'", "select * from job_data LIMIT 1 OFFSET 20;"]
 X, _, Y, _ = DataLoader(sql_import_string, test_size=0)
 
-# predict tags
-list_of_indices = model.predict(X)
+
+# encode the Input
+encoder = models.load_model("Models/encoder_model")
+X_encoded = encoder.predict(X)
+
+# load models
+model = models.load_model("Models/classifier_model")
+list_of_indices = model.predict(X_encoded)
 
 # decode the target back into text - make sur excepts may rows of data
 predicition = tag_decoder(list_of_indices, threshold=.2)
