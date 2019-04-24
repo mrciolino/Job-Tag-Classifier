@@ -1,8 +1,14 @@
+"""
+Matthew Ciolino - Job Tag Classifier
+Our AI model that is used to predict job tags
+"""
 from keras import layers, backend
-from keras.models import Model
+from keras.models import Model, load_model
+from keras.callbacks import TensorBoard
 import tensorflow as tf
 import numpy as np
 
+from time import time
 import sys
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
@@ -19,9 +25,13 @@ backend.set_session(sess)
 sql_string = ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
 X_train, X_test, _, _ = DataLoader(sql_string, test_size=.1)
 
+# tensorboard
+tensorboard = TensorBoard(log_dir="Logs/autoencoder/{}".format(time()),
+                          histogram_freq=1,
+                          write_grads=True)
+
 # reshape data to fit into our model
 num_varibles = X_train.shape[1]
-
 
 def model(num_varibles):
 
@@ -33,24 +43,33 @@ def model(num_varibles):
     enconder_pool_2 = layers.MaxPooling1D(2, padding='same')(encoder_conv_2)
     encoder_conv_3 = layers.Conv1D(150, 6, padding='same')(enconder_pool_2)
     enconder_pool_3 = layers.MaxPooling1D(2, padding='same')(encoder_conv_3)
+    encoder_conv_4 = layers.Conv1D(100, 4, padding='same')(enconder_pool_3)
+    enconder_pool_4 = layers.MaxPooling1D(2, padding='same')(encoder_conv_4)
+    encoder_conv_5 = layers.Conv1D(5, 2, padding='same')(enconder_pool_4)
+    enconder_pool_5 = layers.MaxPooling1D(2, padding='same')(encoder_conv_5)
 
-    dense = layers.Dense(500)(enconder_pool_3)
-    dense = layers.Dense(400)(dense)
+    flatten = layers.Flatten()(enconder_pool_5)
+
+    dense = layers.Dense(500)(flatten)
     dense = layers.Dense(300)(dense)
-
     encoded = layers.Dense(100)(dense)
-
     dense = layers.Dense(300)(encoded)
-    dense = layers.Dense(400)(dense)
     dense = layers.Dense(500)(dense)
 
-    decoder_conv_1 = layers.Conv1D(150, 6, padding='same')(dense)
-    decoder_upsample_1 = layers.UpSampling1D(2)(decoder_conv_1)
-    decoder_conv_2 = layers.Conv1D(200, 8, padding='same')(decoder_upsample_1)
-    decoder_upsample_2 = layers.UpSampling1D(2)(decoder_conv_2)
-    decoder_conv_3 = layers.Conv1D(250, 10, padding='same')(decoder_upsample_2)
+    dense = layers.Dense(3200)(dense)
+    reshape = layers.Reshape((640, 5))(dense)
+
+    encoder_conv_1 = layers.Conv1D(5, 2, padding='same')(reshape)
+    decoder_upsample_1 = layers.UpSampling1D(2)(encoder_conv_1)
+    encoder_conv_2 = layers.Conv1D(100, 4, padding='same')(decoder_upsample_1)
+    decoder_upsample_2 = layers.UpSampling1D(2)(encoder_conv_2)
+    decoder_conv_3 = layers.Conv1D(150, 6, padding='same')(decoder_upsample_2)
     decoder_upsample_3 = layers.UpSampling1D(2)(decoder_conv_3)
-    decoded = layers.Conv1D(1, 250, padding='same')(decoder_upsample_3)
+    decoder_conv_4 = layers.Conv1D(200, 8, padding='same')(decoder_upsample_3)
+    decoder_upsample_4 = layers.UpSampling1D(2)(decoder_conv_4)
+    decoder_conv_5 = layers.Conv1D(250, 10, padding='same')(decoder_upsample_4)
+    decoder_upsample_5 = layers.UpSampling1D(2)(decoder_conv_5)
+    decoded = layers.Conv1D(1, 250, padding='same')(decoder_upsample_5)
     output = layers.Reshape((num_varibles,))(decoded)
 
     autoencoder = Model(inputs=input, outputs=output, name='Autoencoder')
@@ -60,11 +79,12 @@ def model(num_varibles):
 
     return autoencoder, encoder
 
-# load the network
+# grab the network
 autoencoder, encoder = model(num_varibles)
+autoencoder.summary()
 
 # fit the autoencoder
-autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=10, verbose=1)
+autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=1, batch_size=10, verbose=1, callbacks=[tensorboard])
 
 # save the encoder half
-model = encoder.load_model("Models/encoder_model")
+model = encoder.save("Models/encoder_model")
