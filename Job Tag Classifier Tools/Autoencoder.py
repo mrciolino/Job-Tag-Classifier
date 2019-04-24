@@ -32,6 +32,8 @@ tensorboard = TensorBoard(log_dir="Logs/autoencoder/{}".format(time()),
 
 # reshape data to fit into our model
 num_varibles = X_train.shape[1]
+# 139,264
+# look into large stride convs to reduce size
 
 def model(num_varibles):
 
