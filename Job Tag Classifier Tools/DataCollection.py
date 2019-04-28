@@ -43,6 +43,7 @@ def remove_unwanted_rows(df):
         df.dropna(subset=['job_description'], inplace=True)
         df.dropna(subset=['job_title'], inplace=True)
         # remove non english rows
+        # https://www.kaggle.com/screech/ensemble-of-arima-and-lstm-model-for-wiki-pages
         df = df[df.job_title.map(lambda x: detect_non_english(x))]
     except:
         print("ERROR: Unable to remove unwanted rows from the dataframe")
