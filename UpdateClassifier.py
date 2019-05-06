@@ -9,11 +9,9 @@ import sys
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
-# load new_data sql table
-# ["dbname='Cutback' host='localhost' port='5432' user='postgres' password='1234'", "select * from job_data;"]
-# ["dbname='Cutback' host='127.0.0.1'", "select * from new_data;"]
-sql_import_string = ["dbname='Cutback' host='127.0.0.1'", "select * from new_data"]
-X, _, Y, _ = DataLoader(sql_import_string, test_size=0)
+# load pandas dataframe
+data_file = "E:\ML Data\Cutback/big_bertha.csv"
+X, _, Y, _ = DataLoader(data_file, test_size=0)
 
 # encode the Input
 encoder = models.load_model("Models/encoder_model.hd5")

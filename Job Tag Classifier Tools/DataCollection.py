@@ -12,15 +12,11 @@ import psycopg2
 import sys
 
 
-def load_data(sql_connection_string):
+def load_data(data_file):
     try:
-        connection = sql_connection_string[0]
-        selection = sql_connection_string[1]
-        conn = psycopg2.connect(connection)
-        df = pd.io.sql.read_sql_query(selection, conn)
-        conn.close()
+        df = pd.read_csv(data_file)
     except:
-        print("ERROR: Unable to read sql database into pandas dataframe")
+        print("ERROR: Unable to read data into pandas dataframe")
         traceback.print_exc(file=sys.stdout)
         sys.exit(0)
     return df
@@ -43,7 +39,6 @@ def remove_unwanted_rows(df):
         df.dropna(subset=['job_description'], inplace=True)
         df.dropna(subset=['job_title'], inplace=True)
         # remove non english rows
-        # https://www.kaggle.com/screech/ensemble-of-arima-and-lstm-model-for-wiki-pages
         df = df[df.job_title.map(lambda x: detect_non_english(x))]
     except:
         print("ERROR: Unable to remove unwanted rows from the dataframe")
@@ -52,29 +47,23 @@ def remove_unwanted_rows(df):
     return df
 
 
-def add_new_data(df, sql_string):
+def add_new_data(df, file_name):
     try:
-        connection = sql_string[0]
-        table = sql_string[1]
-        engine = create_engine(connection)
-        df.to_sql(name=table, con=engine, if_exists='append', index=False)
+        with open(file_name, 'a') as f:
+            df.to_csv(f, header=False)
     except:
         print("ERROR: Unable to save new dataframe to sql table")
         traceback.print_exc(file=sys.stdout)
         sys.exit(0)
 
-    string = "select count(*) from " + table
-    result = engine.execute(string)
-    for row in result:
-        length = row[0]
-    engine.dispose()
+    df.check_size
 
     return True if length > 25 else False
 
 
-def data_collection(sql_connection_string):
+def data_collection(data_file):
 
-    df = load_data(sql_connection_string)
+    df = load_data(data_file)
     df = remove_unwanted_rows(df)
 
     return df

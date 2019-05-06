@@ -1,5 +1,5 @@
 """
-Matthew Ciolino - Job Tag Classifier 
+Matthew Ciolino - Job Tag Classifier
 A pipeline for operating the model from one function
 """
 
@@ -13,10 +13,10 @@ from FeatureCreation import feature_creation
 from FeatureProcessing import feature_processing
 
 
-def DataLoader(sql_string, test_size):
+def DataLoader(data_file, test_size):
 
     print("Starting Data Collection")
-    df = data_collection(sql_string)  # collect the data
+    df = data_collection(data_file)  # collect the data
 
     print("Starting Feature Creation")
     df = feature_creation(df)  # create some text features
@@ -30,10 +30,10 @@ def DataLoader(sql_string, test_size):
     return X_train, X_test, Y_train, Y_test
 
 
-def BatchData(sql_import_string, sql_add_new_data_string):
+def BatchData(data_file, sql_add_new_data_string):
 
     # import the new data we are prediciting
-    df = data_collection(sql_import_string)
+    df = data_collection(data_file)
 
     # save that data back into the new data table
     update = add_new_data(df, sql_add_new_data_string)
