@@ -11,7 +11,7 @@ import sys
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
-sql_string = "E:\ML Data\Cutback/big_bertha.csv"
+data_file = "D:/ML Data/Job Tag Classifier/job_data.csv"
 X_train, X_test, Y_train, Y_test = DataLoader(data_file, test_size=.2)
 
 # open channel for TensorBoard
@@ -52,7 +52,7 @@ num_classes = Y_train.shape[1]
 model = classification_model(num_varibles, num_classes)
 
 # fit the model
-model.fit(X_train_encoded, Y_train, validation_data=(X_test_encoded, Y_test), epochs=100, batch_size=10, callbacks=[tensorboard])
+model.fit(X_train_encoded, Y_train, validation_data=(X_test_encoded, Y_test), epochs=50, batch_size=5, callbacks=[tensorboard])
 
 # evaluate the model
 model.evaluate(X_test_encoded, Y_test, verbose=1)

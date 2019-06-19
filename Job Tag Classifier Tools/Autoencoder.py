@@ -14,26 +14,13 @@ import sys
 sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
-# make sure keras sees our gpu
-backend.tensorflow_backend._get_available_gpus()
-config = tf.ConfigProto(device_count={'GPU': 1})
-config.gpu_options.allow_growth = True
-sess = tf.Session(config=config)
-backend.set_session(sess)
-
 # make and load data
-data_file = "E:\ML Data\Cutback/job_data.csv"
+data_file = "D:/ML Data/Job Tag Classifier/job_data.csv"
 X_train, X_test, _, _ = DataLoader(data_file, test_size=.25)
-
-# tensorboard
-tensorboard = TensorBoard(log_dir="Logs/autoencoder/{}".format(time()),
-                          histogram_freq=1,
-                          write_grads=True)
 
 # reshape data to fit into our model
 num_varibles = X_train.shape[1]
 
-num_varibles
 
 def model(num_varibles):
 
@@ -89,7 +76,7 @@ autoencoder, encoder = model(num_varibles)
 autoencoder.summary()
 
 # fit the autoencoder
-autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=50, batch_size=10, verbose=1, callbacks=[tensorboard])
+autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=5, batch_size=10, verbose=1)
 
 # save the encoder half
 model = encoder.save("Models/encoder_model")
