@@ -22,8 +22,8 @@ sess = tf.Session(config=config)
 backend.set_session(sess)
 
 # make and load data
-data_file = "E:\ML Data\Cutback/big_bertha.csv"
-X_train, X_test, _, _ = DataLoader(data_file, test_size=.1)
+data_file = "E:\ML Data\Cutback/job_data.csv"
+X_train, X_test, _, _ = DataLoader(data_file, test_size=.25)
 
 # tensorboard
 tensorboard = TensorBoard(log_dir="Logs/autoencoder/{}".format(time()),
@@ -32,6 +32,8 @@ tensorboard = TensorBoard(log_dir="Logs/autoencoder/{}".format(time()),
 
 # reshape data to fit into our model
 num_varibles = X_train.shape[1]
+
+num_varibles
 
 def model(num_varibles):
 
@@ -46,9 +48,7 @@ def model(num_varibles):
     pool = layers.MaxPooling1D(2, padding='same')(conv)
     conv = layers.Conv1D(40, 4, padding='same')(pool)
     pool = layers.MaxPooling1D(2, padding='same')(conv)
-    conv = layers.Conv1D(20, 2, padding='same')(pool)
-    pool = layers.MaxPooling1D(2, padding='same')(conv)
-    conv = layers.Conv1D(3, 2, padding='same')(pool)
+    conv = layers.Conv1D(10, 2, padding='same')(pool)
     pool = layers.MaxPooling1D(2, padding='same')(conv)
 
     flatten = layers.Flatten()(pool)
@@ -59,12 +59,11 @@ def model(num_varibles):
     dense = layers.Dense(200, activation="relu")(encoded)
     dense = layers.Dense(300, activation="relu")(dense)
 
-    dense = layers.Dense(6528)(dense)
-    reshape = layers.Reshape((int(6528/3), 3))(dense)
+    dense = layers.Dense(5760)(dense)
+    reshape = layers.Reshape((int(5760/10), 10))(dense)
 
-    conv = layers.Conv1D(3, 2, padding='same')(reshape)
-    upsample = layers.UpSampling1D(2)(conv)
-    conv = layers.Conv1D(20, 2, padding='same')(upsample)
+
+    conv = layers.Conv1D(10, 2, padding='same')(reshape)
     upsample = layers.UpSampling1D(2)(conv)
     conv = layers.Conv1D(40, 4, padding='same')(upsample)
     upsample = layers.UpSampling1D(2)(conv)
@@ -90,7 +89,7 @@ autoencoder, encoder = model(num_varibles)
 autoencoder.summary()
 
 # fit the autoencoder
-autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=1, batch_size=100, verbose=1, callbacks=[tensorboard])
+autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=50, batch_size=10, verbose=1, callbacks=[tensorboard])
 
 # save the encoder half
 model = encoder.save("Models/encoder_model")
