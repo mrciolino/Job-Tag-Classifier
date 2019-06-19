@@ -34,9 +34,7 @@ After we have seen enough data go through the predict tag function, we use all t
 
 # The Performance
 
-Our autoencoder compressed our job description to 100 feature representation. We can visualize them with a heatmap.  
-<img style="float: right;" src="refs/autoencoding_heatmap.png">
-<!-- ![](refs/autoencoding_heatmap.png) -->
+Our autoencoder compressed our job description to 100 feature representation. We can visualize them with a heatmap.    <img style="float: right;" src="refs/autoencoding_heatmap.png">
 
  After encoding the descriptions, we send the data into the deep neural network. We scored an 86% accuracy on both the training and testing set. We can visualize accuracy and loss during training in tensorboard.
 
