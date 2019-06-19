@@ -34,16 +34,25 @@ After we have seen enough data go through the predict tag function, we use all t
 
 # The Performance
 
-Our autoencoder compressed our job description to 100 feature representation. We can visualize them with a heatmap.  ![](refs/autoencoding_heatmap.png)
+Our autoencoder compressed our job description to 100 feature representation. We can visualize them with a heatmap.  
+<img style="float: right;" src="refs/autoencoding_heatmap.png">
+<!-- ![](refs/autoencoding_heatmap.png) -->
 
  After encoding the descriptions, we send the data into the deep neural network. We scored an 86% accuracy on both the training and testing set. We can visualize accuracy and loss during training in tensorboard.
+
 ![](refs/classifier_tensorboard_acc.png)
 ![](refs/classifier_tensorboard_loss.png)
 
 One thing our dataset had was unbalanced classes. Some classes had 200 examples while others had only a handful. This led to many classes having zero precession. Finding more data would improve our scores but here is the per class classification report.
+
 ![](refs/class_scores.png)
 
 Finally let’s see how our model developed over each layer be representing weights of the first, third and sixth dense layers as a histogram.
+
 ![](refs/tensor_dense_1.png)
 ![](refs/tensor_dense_3.png)
 ![](refs/tensor_dense_6.png)
+
+# Conclusion
+
+Overall the model was successfully able to predict job tag at 85% accuracy. While a success metric was never set to make this a viable product 85% is a great starting point for a relatively small dataset. With more time and computing power, and a balanced dataset accuracy and per class precision could increase.
