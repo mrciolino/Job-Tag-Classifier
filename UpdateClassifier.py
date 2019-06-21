@@ -10,7 +10,7 @@ sys.path.append("Job Tag Classifier Tools")
 from Pipeline import DataLoader
 
 # load pandas dataframe
-data_file = "E:\ML Data\Cutback/big_bertha.csv"
+data_file = "E:\ML Data\job_tag_classifier/big_bertha.csv"
 X, _, Y, _ = DataLoader(data_file, test_size=0)
 
 # encode the Input
